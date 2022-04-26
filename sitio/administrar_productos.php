@@ -31,8 +31,12 @@ function subirimagen(){
     var files = $('#imagen')[0].files[0];
 
 
-    if (files == null){
+    if (subcategoria == 0){
+      alert("Debe seleccionar sub categoria asociada");
+      return false;
+    }
 
+    if (files == null){
       alert("Debe seleccionar imagen");
       return false;
     }
@@ -66,27 +70,28 @@ function verImagen(archivo){
 }
 
 
-function actualizarsubcategoria(idcombo, idcategoria){
+function actualizarsubcategoria(idcombo, id_galeria){
 
   var idcombo     = idcombo;
-  var idcategoria = idcategoria;
-  
+  var id_galeria = id_galeria;
 
-     var datos = { 
+  var datos = { 
              "idcombo":idcombo,
-             "idcategoria":idcategoria
+             "id_galeria":id_galeria
    }; 
-   console.log(datos);
-  //  $.ajax({
-  //      type:"post",
-  //      url:"recursos/actualizar_categoria.php",
-  //      data: datos,
-  //   success: function (response) {
-  //         alert(response);
-  //         location.reload(); 
-  //                   
-  //      }
-  //   });  
+
+
+    $.ajax({
+        type:"post",
+        url:"recursos/actualizar_subcategoria_productos.php",
+        data: datos,
+
+     success: function (response) {
+           alert(response);
+          // location.reload(); 
+                     
+        }
+     });  
 }
 
 
@@ -111,6 +116,11 @@ function actualizarcategoria(idcombo, idcategoria){
                      
         }
      });  
+}
+
+
+function editarcontenido(id_galeria, valor){
+  location.href="administrar_productos_editar.php?id_galeria="+id_galeria+"&valor="+valor
 }
 </script>
 </head>
@@ -177,7 +187,6 @@ while($row = mysqli_fetch_assoc($result)){
                     <th>Imagen</th>
                     <th>Sub categoria</th>
                     <th>Categoria</th>
-                    <th>Detalle</th>
                     <th>Precio $</th>
                     <th>Stock</th>
                     <th>Modificar</th>
@@ -192,11 +201,12 @@ FROM galeria_imagenes gi
 inner join sub_categorias sc on sc.id_subcategoria = gi.id_subcategoria
 inner join categorias c on c.id_categoria = sc.id_categoria
 where gi.id_categoria=$valor";
-echo $sql;
+//echo $sql;
 $result   = mysqli_query($conn, $sql);
 $vuelta = 0;
 while($row = mysqli_fetch_assoc($result)){ 
 
+  $id_Categoria  = $row['id_Categoria'];
   $id_subcategoria  = $row['id_subcategoria'];
   $id_galeria  = $row['id_galeria']; //id de galeria fotos
   $nombre_subcategoria = $row['nombre_subcategoria'];
@@ -211,13 +221,11 @@ while($row = mysqli_fetch_assoc($result)){
   }else{
       $imagen       = $imagen;
   }
-
 ?>    
         <tr>
           <td align="center">
 
 <input type="hidden" id="id_galeria<?php echo $vuelta; ?>" name="id_galeria<?php echo $vuelta; ?>" value="<?php echo $id_galeria;?>">
-
 
             <img src="<?php echo $imagen ;?>"onclick="verImagen('<?php echo $imagen ;?>')" 
             style="width:50px;
@@ -232,15 +240,14 @@ while($row = mysqli_fetch_assoc($result)){
 <select  class="form-control" style="width:100%;"  
 onchange="actualizarsubcategoria(this.value, <?php echo $id_galeria?> );">
 <?php
-    $sql2      = "SELECT * from sub_categorias";  
+    $sql2      = "SELECT * from sub_categorias where id_categoria=$id_Categoria";  
     $result2   = mysqli_query($conn, $sql2);  
     while($row2 = mysqli_fetch_assoc($result2)){ 
 ?>    
     <option value="<?php echo $row2['id_subcategoria'];?>"  class="form-control" 
       <?php if($row['id_subcategoria'] == $row2['id_subcategoria']) {
         echo "selected";
-      }?> >
-      <?php echo $row2['nombre_subcategoria'];?>
+      }?> ><?php echo $row2['nombre_subcategoria'];?>
     </option>
 
 <?php 
@@ -259,30 +266,30 @@ onchange="actualizarcategoria(this.value, <?php echo $id_galeria?> );">
 
     while($row3 = mysqli_fetch_assoc($result3)){ 
   ?>    
-    <option value="<?php echo $row3['id_categoria'];?>"  class="form-control" 
-      <?php if($row['id_Categoria'] == $row3['id_categoria']) {echo "selected";}?>
-      ><?php echo $row3['nombre_categoria'];?>
-    </option>
+  <option value="<?php echo $row3['id_categoria'];?>"  class="form-control" 
+    <?php if($row['id_Categoria'] == $row3['id_categoria']) {echo "selected";}?>
+    ><?php echo $row3['nombre_categoria'];?>
+  </option>
 
-  <?php 
-    }
-  ?>
-    </select>  
+<?php 
+  }
+?>
+</select>  
 
-
-          </td>
-          <td>
-<textarea id="detalleinfo" name="detalleinfo" class="form-control"><?php echo $detalleinfo; ?></textarea>
 
           </td>
           <td>
-<center><input type="text" id="precio" name="precio" style="text-align:center;"  value="<?php echo $precio;?>"></center>
+<center>
+$<input type="number" title="configuración rapida, lo modificado aquí se modifica al instante" class="form-control-sm" id="precio" name="precio" value="<?php echo $precio;?>" style="width: 100px;">
+</center>
           </td>
           <td>
-<center><input type="text" id="stock" name="stock"  style="text-align:center;" value="<?php echo $stock;?>"></center>
+<center>
+<input type="number" title="configuración rapida, lo modificado aquí se modifica al instante" class="form-control-sm" id="stock" name="stock" value="<?php echo $stock;?>" style="width: 100px;">
+</center>
           </td>
           <td>
-        <a href="#" title="editar contenido" onclick="editarsubcategoria(<?php echo $vuelta; ?>);">
+        <a href="#" title="editar contenido" onclick="editarcontenido(<?php echo $id_galeria;?>, <?php echo $valor; ?>);">
         <img src="images/edit.png" style="width: 70px;">
         </a>     
           </td>
@@ -334,7 +341,7 @@ $vuelta = $vuelta + 1;
         <?php
           while($row = mysqli_fetch_assoc($result)){ 
         ?>    
-          <option value="<?php echo $row['id_categoria'];?>" class="form-control" >
+          <option value="<?php echo $row['id_subcategoria'];?>" class="form-control" >
             <?php echo $row['nombre_subcategoria'];?>
           </option>
 

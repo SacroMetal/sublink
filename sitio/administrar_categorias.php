@@ -31,6 +31,7 @@ $('#myModal').on('shown.bs.modal', function () {
 
     <thead>
         <tr>
+            <th><center>Pedidos</center></th>
             <th><center>Nombre Categoría</center></th>
             <th><center>Editar</center></th>
             <th><center>Eliminar</center></th>
@@ -46,8 +47,18 @@ $('#myModal').on('shown.bs.modal', function () {
 
         $id_categoria = $row['id_categoria'] ;
       	$nombre_categoria = $row['nombre_categoria'] ;
+        $habillitar_formulario = $row['habillitar_formulario'] ;
 ?>    
 <tr>
+    <td>
+      <center>
+        <input type="checkbox" id="checkbox<?php echo $vuelta; ?>"value="checkbox" class="form-check-input" <?php 
+          if ($habillitar_formulario == 1){
+            echo "checked";
+          } 
+        ?>>
+      </center>
+    </td>
     <td> 
     <input type="hidden" class="form-control" id="id_categoria<?php echo $vuelta; ?>" name="id_categoria<?php echo $vuelta; ?>" value="<?php echo $id_categoria;?>">
 
@@ -56,7 +67,7 @@ $('#myModal').on('shown.bs.modal', function () {
 
     <td><center>
         <a href="#" title="editar contenido" onclick="editarcategoria(<?php echo $vuelta;?>);">
-        <img src="images/edit.png" style="width: 70px;">
+        <img src="images/active.png" style="width: 30px;">
         </a>
     </center>
     </td>
@@ -137,7 +148,7 @@ $('#myModal').on('shown.bs.modal', function () {
 
     <td><center>
         <a href="#" title="editar contenido" onclick="editarsubcategoria(<?php echo $vuelta; ?>);">
-        <img src="images/edit.png" style="width: 70px;">
+        <img src="images/active.png" style="width: 30px;">
         </a>
     </center>
     </td>
@@ -356,12 +367,23 @@ function eliminarsubcategoria(id) {
  function editarcategoria(vuelta){
     var id_categoria          = document.getElementById("id_categoria"+vuelta).value;
     var nombre_categoria      = document.getElementById("nombre_categoria"+vuelta).value;
-    var tipocategoria         = 1;
+    var tipocategoria         = 1;// esto sirve para no crear tantas pantallas de insertar datos
+   // var checkbox              = document.getElementById("checkbox"+vuelta).value;
+
+
+
+  if (document.getElementById("checkbox"+vuelta).checked)
+    {
+      var checkbox  = 1;
+    }else{
+      var checkbox = 0;
+    }
 
     var datos = { 
                "id_categoria":id_categoria,
                "nombre_categoria":nombre_categoria,
-               "tipocategoria" : tipocategoria
+               "tipocategoria" : tipocategoria,
+               "checkbox" : checkbox
     }; 
 
     $.ajax({
@@ -370,7 +392,7 @@ function eliminarsubcategoria(id) {
         data: datos,
         success: function (response){
           alert(response)
-          location.reload();  
+         // location.reload();  
       }
     });  
  }
@@ -378,7 +400,7 @@ function eliminarsubcategoria(id) {
   function editarsubcategoria(vuelta){
     var id_subcategoria          = document.getElementById("id_subcategoria"+vuelta).value;
     var nombre_subcategoria      = document.getElementById("nombre_subcategoria"+vuelta).value;
-    var tipocategoria            = 2;
+    var tipocategoria            = 2;// esto sirve para no crear tantas pantallas de insertar datos
 
     var datos = { 
                "id_subcategoria":id_subcategoria,

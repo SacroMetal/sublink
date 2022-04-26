@@ -7,10 +7,13 @@ if ($tipocategoria  == 1){
 
   $id_categoria          = $_POST["id_categoria"];
   $nombre_categoria      = $_POST["nombre_categoria"];
+  $habillitar_formulario = $_POST["checkbox"];
 
-  $consulta="update categorias set  nombre_categoria='$nombre_categoria' where id_categoria=$id_categoria";      
- 
-  echo "Nombre de categoria actualizado a " .$nombre_categoria;
+
+
+  $consulta="update categorias set  nombre_categoria='$nombre_categoria', habillitar_formulario =$habillitar_formulario where id_categoria=$id_categoria";      
+
+  echo "Categoria " .$nombre_categoria." actualizada";
   $resultado = $conn->query($consulta);
   
 }

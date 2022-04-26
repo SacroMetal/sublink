@@ -6,11 +6,11 @@
 	$subcategoria   =$_REQUEST['subcategoria'];
 	
 	$nombre_imagen = $subcategoria."-".$_FILES["file"]["name"];
-	$rutaBD       = "galeria_imagenes/".$subcategoria."/";
+	$rutaBD       = "galeria_imagenes/";
 	$rutasubidaBD = $rutaBD.$nombre_imagen;
 
 	$rutacarpeta  = $rutaabsolutasubirimagenes;
-	$rutasubida   = $rutacarpeta.$subcategoria."/".$nombre_imagen;
+	$rutasubida   = $rutacarpeta.$nombre_imagen;
 
 
 	if (file_exists($rutasubida)) {
